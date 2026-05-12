@@ -104,10 +104,10 @@ class DMDSana(torch.nn.Module):
 
         try:
             # load ode init model
-            missing_g, unexpected_g = self.generator.load_state_dict(state_dict, strict=True)
+            missing_g, unexpected_g = self.generator.load_state_dict(state_dict, strict=strict)
 
         except Exception:
-            missing_g, unexpected_g = self.generator.model.load_state_dict(state_dict, strict=True)
+            missing_g, unexpected_g = self.generator.model.load_state_dict(state_dict, strict=strict)
 
         # eval mode and align dtype/device
         self.generator.model.eval()
@@ -311,12 +311,14 @@ class DMDSana(torch.nn.Module):
         self.scheduler = self.generator.get_scheduler()
         self.scheduler.timesteps = self.scheduler.timesteps.to(device)
 
+        # Allow non-strict load when adding new attention modules (e.g. GDSA gate_mlp / delta_scale).
+        load_strict = bool(args.get("ckpt_load_strict", True))
         if self.fake_name == "SANA":
             load_info = self.from_pretrained(
-                args.generator_ckpt, strict=True, fake_ckpt=args.fake_ckpt, real_ckpt=args.get("real_ckpt", None)
+                args.generator_ckpt, strict=load_strict, fake_ckpt=args.fake_ckpt, real_ckpt=args.get("real_ckpt", None)
             )
         else:
-            load_info = self.from_pretrained(args.generator_ckpt, strict=True, real_ckpt=args.get("real_ckpt", None))
+            load_info = self.from_pretrained(args.generator_ckpt, strict=load_strict, real_ckpt=args.get("real_ckpt", None))
         print(f"[Load] SANA weights loaded: {load_info}")
 
     def _initialize_inference_pipeline(self):

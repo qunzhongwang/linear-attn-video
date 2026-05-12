@@ -1,0 +1,6 @@
+N_blocks,S_norm_final,W_latent,decreased,dtype,forward_ms,max_deviation,mean_norm,recurrence_pct,recurrence_total_ms,test,value,value_kib
+8,271692.09375,1,,torch.float32,5718.678004015237,,,58.82884970618556,3364.2324881628156,recurrence_cost,,
+4,271692.09375,2,,torch.float32,4737.178885797039,,,71.03388201721697,3365.0020606815815,recurrence_cost,,
+,,,,torch.float32,,,,,,state_bytes_per_layer,786432,768.0
+,,,,,,nan,nan,,,rope_l2_preservation,,
+,,,1,,,,,,,loss_decrease_toy_training,,

@@ -13,7 +13,10 @@ from termcolor import colored
 from torch.distributed.fsdp import FullOptimStateDictConfig, FullStateDictConfig
 from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 from torch.distributed.fsdp import StateDictType
-from torchvision.io import write_video
+try:
+    from torchvision.io import write_video
+except ImportError:
+    from _video_io import write_video  # tools/_compat shim for torchvision >= 0.26
 
 from diffusion.longsana.model import StreamingSANATrainingModel
 from diffusion.longsana.utils.debug_option import DEBUG, DEBUG_GRADIENT, LOG_GPU_MEMORY

@@ -11,7 +11,10 @@ from termcolor import colored
 from torch.distributed.fsdp import FullOptimStateDictConfig, FullStateDictConfig
 from torch.distributed.fsdp import FullyShardedDataParallel as FSDP
 from torch.distributed.fsdp import StateDictType
-from torchvision.io import write_video
+try:
+    from torchvision.io import write_video
+except ImportError:
+    from _video_io import write_video  # tools/_compat shim for torchvision >= 0.26
 
 from diffusion.longsana.model import DMDSana
 from diffusion.longsana.pipeline import SanaInferencePipeline
@@ -138,7 +141,7 @@ class Trainer:
                 state_dict = state_dict["generator"]
             elif "model" in state_dict:
                 state_dict = state_dict["model"]
-            self.model.generator.load_state_dict(state_dict, strict=True)
+            self.model.generator.load_state_dict(state_dict, strict=bool(config.get("ckpt_load_strict", True)))
 
         # Step 4: Initialize the optimizer
         self.generator_optimizer = torch.optim.AdamW(

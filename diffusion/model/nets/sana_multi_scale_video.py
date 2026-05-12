@@ -117,6 +117,17 @@ class SanaVideoMSBlock(nn.Module):
             # linear self attention with first relu kernel and then rope
             self_num_heads = hidden_size // linear_head_dim
             self.attn = ChunkedLiteLAReLURope(hidden_size, hidden_size, heads=self_num_heads, eps=1e-8, qk_norm=qk_norm)
+        elif attn_type == "gdsa":
+            # Gated Delta Split Attention (GDSA-1 only). Imported from spec/gdsa/ to keep the
+            # research code in a clean folder; falls back to vanilla SANA at init via the
+            # delta_scale=0 residual. use_bias=True to match the trained CachedCausalAttention
+            # checkpoint format (qkv + proj have biases).
+            self_num_heads = hidden_size // linear_head_dim
+            from spec.gdsa.gdsa_attention import GDSAAttention
+            self.attn = GDSAAttention(
+                in_dim=hidden_size, out_dim=hidden_size, heads=self_num_heads,
+                dim=linear_head_dim, eps=1e-8, qk_norm=qk_norm, use_bias=True,
+            )
         else:
             self.attn = None
 

@@ -195,3 +195,8 @@ cython_debug/
 checkpoints
 .deepspeed*
 prompts
+
+# BGDA handover additions
+*.pdf
+bgda_plan_v1.txt
+bgda_iclr2027.md
